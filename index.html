@@ -12,16 +12,44 @@ and open the template in the editor.
 
         <link rel="shortcut icon" href="#">
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-        <link rel="stylesheet" href="styles.css">
+        <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
+        <link rel="stylesheet" href="select.css">
+        <link rel="stylesheet" href="game.css">
+
         <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.js"></script>
         <script type="text/javascript" src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-        <script type="text/javascript" src="script.js"></script>
-    </head>
+        <script type="text/javascript" src="select.js"></script>
+        <script type="text/javascript" src="game.js"></script>
+</head>
     <body>
-        <canvas id="canvas" width="800px" height="400px">
-            Sorry, your borwser does not support HTML5 canvas element.
-        </canvas>
-        <div id="mainButton"></div>
-        <div clas="characterSelection"></div>
+        <div data-role="page" id="page1">
+            
+            <div id="notSelected" class="centered80 marginTopBot20"></div>
+            
+            <p id="description" class="centered80 marginTopBot20"></p>
+            
+            <div class="centerWrapper">
+                <a id="selectButton" onclick="confirmed()">
+                    Select to my team
+                </a>
+            </div>
+
+            <div id="selectionHolder" class="centered80">
+                <div class="playerSelection" id="player1">
+                </div>
+
+                <div class="playerSelection" id="player2">
+                </div>
+            </div>
+            <div id="finishButton" class="centered80">
+                <a onclick="startGame()">Start game</a>
+            </div>
+        </div>
+
+        <div data-role="page" id="page2">
+            <canvas id="canvas" width="1080px" height="1920px">
+                Sorry, your browser does not support HTML5 canvas element.
+            </canvas>
+        </div>
     </body>
 </html>

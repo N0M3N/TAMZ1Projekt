@@ -1,0 +1,95 @@
+.centered80 {
+    position: relative;
+    left:10%;
+    right:10%;
+    width: 80%;
+    text-align: center;
+}
+
+.marginTopBot20 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.centerWrapper {
+    text-align: center;
+}
+
+#page1 {
+    background-color: #333;
+    color: rosybrown;
+    text-shadow: 0px 0px white;
+    font-family: 'Indie Flower';
+}
+
+#page1 img {
+    width: 16.6%;
+}
+
+#page1 .selected {
+    border: 10px solid white;
+    border-radius: 20%;
+}
+
+.h3 {
+    font-size: 50px;
+}
+
+#notSelected {
+    height: 200px;
+}
+
+#description {
+    font-size: 70px;
+    height: 500px;
+}
+
+#selectionHolder {
+    text-align: center;
+    width: 80%;
+}
+
+#player1 {
+    height: 900px;
+    float:left;
+}
+
+#player2 {
+    height: 900px;
+    float: right;
+}
+
+#page1 .playerSelection {
+    text-align: center;
+    font-size: 40px;
+    width: 45%;
+}
+
+#page2 .playerSelection { 
+    text-align: center;
+    font-size: 50px;
+    width: 45%;
+}
+
+#page1 .playerSelection img {
+    width: 50%;
+}
+
+#page2 .playerSelection img {
+    width: 50%;
+}
+
+#selectButton {
+    font-size: 70px;
+    color: white;
+}
+
+#finishButton {
+    font-size: 80px;
+    visibility: hidden;
+}
+
+#finishButton a{
+    color: green;
+    outline-color: transparent;
+}
