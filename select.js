@@ -8,24 +8,24 @@ const archerDesc = "Archer the agille ranger skilled in finding enemy's weak spo
 
 var selected;
 
-function Role(name, x, y, hp, speed, ability, description){
+function Role(name, hp, speed, range, dmg, ability, description){
     this.name = name;
     this.hp = hp;
-    this.x = x;
-    this.y = y;
     this.speed = speed;
+    this.range = range;
+    this.dmg = dmg;
     this.description = description;
     this.ability = ability;
 }
 
 $(document).on("pagecreate", "#page1", function() {
-    notselected.push(new Role("warrior", 20, 10, 100, 10, 100, warriorDesc));
-    notselected.push(new Role("assassin", 20, 10, 100, 15, 100, assassinDesc));
+    notselected.push(new Role("warrior", 100, 8, 1, 20, "", warriorDesc));
+    notselected.push(new Role("assassin", 80, 13, 1, 15, "", assassinDesc));
 
-    notselected.push(new Role("archer", 20, 140, 100, 5, 100, archerDesc));
-    notselected.push(new Role("mage", 150, 140, 100, 3, 100, mageDesc));
+    notselected.push(new Role("archer", 80, 5, 13, 15, "", archerDesc));
+    notselected.push(new Role("mage", 60, 3, 20, 30, "", mageDesc));
 
-    notselected.push(new Role("priest", 20, 270, 100, 7, 100, priestDesc));
+    notselected.push(new Role("priest", 100, 10, 1, 10, "", priestDesc));
     // todo
 
     if(notselected.length!==0) {
