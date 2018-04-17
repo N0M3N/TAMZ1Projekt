@@ -1,37 +1,37 @@
 var player1 = [], player2 = [], notselected = [];
 var playerOnTurn = 1;
-const warriorDesc = "With his huge sustain warrior is able to get to the front line of the battle without getting hit and deal lots of damage with his mighty sword.";
-const assassinDesc = "todo";
-const mageDesc = "The frost mage is a master of crowd controll. His attacks freez the enemies and reduce their mobility.";
-const priestDesc = "The priestes of the temple is the master in healing of her allies but in the battle she doesn't take over her enemies.";
-const archerDesc = "Archer the agille ranger skilled in finding enemy's weak spots to pierce their defense putting enemies down one by one.";
-
+const warriorPassive = "";
+const assassinPassive = "Assasin: Attacking an enemy poisons them causing them to recieve damage when moving.";
+const magePassive = "Frost mage: Can attack any enemy on the map and freeze them reducing their speed";
+const priestPassive = "Priestess: Can heal allies for 30 health and cleans their conditions.";
+const archerPassive = "Archer: His attacks deal up to 20 bonus damage (this bonus can be modified by enchanter)";
+const enchanterPassive = "Enchanter: Enchants allies increasing their damage.";
 var selected;
 
-function Role(name, hp, speed, range, dmg, ability, description){
+function Role(name, hp, speed, range, dmg, passive){
     this.name = name;
+    this.maxhp = hp;
     this.hp = hp;
     this.speed = speed;
     this.range = range;
     this.dmg = dmg;
-    this.description = description;
-    this.ability = ability;
+    this.passive = passive;
 }
 
 $(document).on("pagecreate", "#page1", function() {
-    notselected.push(new Role("warrior", 100, 8, 1, 20, "", warriorDesc));
-    notselected.push(new Role("assassin", 80, 13, 1, 15, "", assassinDesc));
+    notselected.push(new Role("warrior", 100, 8, 1, 20, warriorPassive));
+    notselected.push(new Role("assassin", 80, 13, 1, 15, assassinPassive));
 
-    notselected.push(new Role("archer", 80, 5, 13, 15, "", archerDesc));
-    notselected.push(new Role("mage", 60, 3, 20, 30, "", mageDesc));
+    notselected.push(new Role("archer", 80, 5, 13, 20, archerPassive));
+    notselected.push(new Role("mage", 60, 3, 20, 30, magePassive));
 
-    notselected.push(new Role("priest", 100, 10, 1, 10, "", priestDesc));
-    // todo
+    notselected.push(new Role("priest", 80, 10, 1, 10, priestPassive));
+    notselected.push(new Role("enchanter", 60, 8, 10, 20, enchanterPassive));
 
     if(notselected.length!==0) {
         selected = notselected[0];
-        var desc = document.getElementById("description");
-        desc.innerText = selected.description;
+        var desc = document.getElementById("passive");
+        desc.innerText = selected.passive;
     }
 
     repaintSelect();
@@ -59,7 +59,12 @@ function repaintSelect(){
         p2.innerHTML += "<img class=\"selectedRoleImg\" src=\"src\\" + name + ".png\">";
     })
 
-    if(selected!==undefined) document.getElementById("description").innerText = selected.description;
+    if(selected!==undefined) {
+        document.getElementById("passive").innerText = selected.passive;
+        document.getElementById("health").innerText = selected.maxhp;
+        document.getElementById("damage").innerText = selected.dmg;
+        document.getElementById("range").innerText = selected.range;
+    }
 }
 
 function putRole(div, element){
@@ -100,11 +105,13 @@ function confirmed(){
 
     if(notselected.length!==0) {
         selected = notselected[0];
-        var desc = document.getElementById("description");
-        desc.innerText = selected.description;
+        var passive = document.getElementById("passive");
+        passive.innerText = selected.passive;
     }
     else {
         document.getElementById("selectButton").style.visibility = "hidden";
+        document.getElementById("stats").style.visibility = "hidden";
+        document.getElementById("passive").style.visibility = "hidden";
         document.getElementById("finishButton").style.visibility = "visible";
     }
 

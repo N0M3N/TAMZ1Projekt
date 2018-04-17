@@ -1,7 +1,6 @@
 var canvas, player1, player2;
 var queue = new Queue();
-var imgs = {
-}
+var chanted, frozen, poisoned;
 
 $(document).on("pagecreate", "#page2", function() {
     player1.figures = JSON.parse(localStorage.player1);
@@ -16,12 +15,7 @@ $(document).on("pagecreate", "#page2", function() {
     initGame();
 });
 
-function figure(x, y, role){
-    this.x = x;
-    this.y = y;
-    this.role = role;
-}
-
+// set positions of the figures on the field and enqueue them
 function initGame(){
     player1.figures[0].x = 2; player1.figures[0].y = 0;
     player1.figures[1].x = 4; player1.figures[1].y = 0;
@@ -29,14 +23,14 @@ function initGame(){
 
     player2.figures[0].x = 2; player2.figures[0].y = 15;
     player2.figures[1].x = 4; player2.figures[1].y = 15;
-    // player1[2].x = 6; player1[2].y = 15;
+    player2.figures[2].x = 6; player2.figures[2].y = 15;
 
     queue.push(player1.figures[0]);
     queue.push(player2.figures[0]);
     queue.push(player1.figures[1]);
     queue.push(player2.figures[1]);
     queue.push(player1.figures[2]);
-    // queue.push(player2.figures[2]);
+    queue.push(player2.figures[2]);
 
     repaint();
 }
@@ -64,8 +58,8 @@ function paintPlayer(figures, teamColor){
             canvas.fillRect(coords.x, coords.y, 120, 120)
             canvas.drawImage(img, coords.x+10, coords.y+10);
             canvas.fillStyle = "red";
-            canvas.font = "30px Arial";
-            canvas.fillText(x.hp, coords.x+60, coords.y+40)
+            canvas.font = "bold 30px Arial";
+            canvas.fillText(x.hp, coords.x+5, coords.y+30)
         }
     })
 }
@@ -109,26 +103,14 @@ function getCanvasCoords(x, y){
 function interact(coords){
     var figureOnTurn = queue.seek();
     var target;
-    var player;
-    var targetPlayer;
     player1.figures.forEach(x => {
         if(x.x == coords.x && x.y == coords.y){
             target = x;
-            player = 1;
-        }
-
-        if(x === figureOnTurn){
-            targetPlayer = 1;
         }
     })
     player2.figures.forEach(x => {
         if(x.x == coords.x && x.y == coords.y){
             target = x;
-            player = 2;
-        }
-
-        if (x === figureOnTurn){
-            targetPlayer == 2;
         }
     })
 
@@ -140,15 +122,16 @@ function interact(coords){
         }
     }
     else if(attack(figureOnTurn, target)) {
-        console.log(figureOnTurn.name + "[" + figureOnTurn.x + ":" + figureOnTurn.y + "] attacked " + target.name + "[" + coords.x + ":" + coords.y + "]");
+        console.log(figureOnTurn.name + "[" + figureOnTurn.x + ":" + figureOnTurn.y + "] interacted " + target.name + "[" + coords.x + ":" + coords.y + "]");
         queue.next();
         repaint();
     }
 }
 
-// move to coords if enaugh speed
+// move to coords if enaugh speed and empty
 function move(figureOnTurn, coords){
-    if(Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-coords.x), 2)+Math.pow(Math.abs(figureOnTurn.y-coords.y),2))>figureOnTurn.speed) return false;
+    var distance = Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-coords.x), 2)+Math.pow(Math.abs(figureOnTurn.y-coords.y),2));
+    if(distance > figureOnTurn.speed) return false;
 
     figureOnTurn.x = coords.x;
     figureOnTurn.y = coords.y;
@@ -156,12 +139,86 @@ function move(figureOnTurn, coords){
     return true;
 }
 
+// attack the target if in range
 function attack(figureOnTurn, target){
-    if(Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-target.x), 2)+Math.pow(Math.abs(figureOnTurn.y-target.y),2))>figureOnTurn.range) return false;
+    if(areAllies(figureOnTurn, target)){
+        switch(figureOnTurn.name){
+            case "warrior":
+            case "archer":
+            case "assassin":
+            case "mage":
+                return false;
 
-    target.hp -= figureOnTurn.dmg;
-    return true;    
+            case "priest":
+                heal(target, 30);
+                return true;
+            case "enchanter":
+                chant(target);
+                return true;
+            default:
+                return false;
+        }
+    }
+    else {
+        var distance = Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-target.x), 2)+Math.pow(Math.abs(figureOnTurn.y-target.y),2));
+        if(distance > figureOnTurn.range) return false;
+        
+        if(figureOnTurn.name === "archer"){
+            dealDmg(target, figureOnTurn.dmg + (Math.floor(Math.random()*1000 % 20)));
+        }
+        else {
+            dealDmg(target, figureOnTurn.dmg);
+        }
+        return true; 
+    }
 }
+
+function dealDmg(target, dmg){
+    target.hp -= dmg;
+    if(target.hp > 0) return;
+    
+    player1.figures = removeFromArray(player1.figures, target);
+    player2.figures = removeFromArray(player2.figures, target);
+    queue.remove(target);
+}
+
+function heal(target, hp){
+    target.hp += hp;
+    if(target.hp > target.maxhp) target.hp = target.maxhp;
+    console.log(target.name + " healed");
+}
+
+function areAllies(first, second){
+    var f = false, s = false;
+    player1.figures.forEach(x => {
+        if(x === first){
+            f = true;
+        }
+        else if(x === second){
+            s = true;
+        }
+    })
+
+    if(f && s){
+        return true;
+    }
+    else {
+        f = false;
+        s = false;
+    }
+
+    player2.figures.forEach(x => {
+        if(x === first){
+            f = true;
+        }
+        else if(x === second){
+            s = true;
+        }
+    })
+
+    return f && s;
+}
+
 function Queue(){
     this.arr = [];
     this.lenght = function () { return this.arr.lenght; }
@@ -182,4 +239,22 @@ function Queue(){
         var tmp = this.pop();
         this.push(tmp);
     }
+
+    this.remove = function (item) {
+        this.arr = removeFromArray(this.arr, item);
+    }
+
+    this.isEmpty = function() {
+        return this.arr.lenght === 0;
+    }
+}
+
+function removeFromArray(array, object){
+    newArr = [];
+    array.forEach(x => {
+        if(x !== object){
+            newArr.push(x);
+        }
+    })
+    return newArr;
 }

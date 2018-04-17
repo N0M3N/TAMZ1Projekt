@@ -26,8 +26,22 @@ and open the template in the editor.
             
             <div id="notSelected" class="centered80 marginTopBot20"></div>
             
-            <p id="description" class="centered80 marginTopBot20"></p>
-            
+            <table id="stats">
+                <tr>
+                    <td>Health:</td>
+                    <td id="health"></td>
+                </tr>
+                <tr>
+                    <td>Damage</td>
+                    <td id="damage"></td>
+                </tr>
+                <tr>
+                    <td>Range</td>
+                    <td id="range"></td>
+                </tr>
+            </table>
+            <p id="passive" class="centered80 marginTopBot20"></p>
+
             <div class="centerWrapper">
                 <a id="selectButton" onclick="confirmed()">
                     Select to my team
@@ -41,6 +55,7 @@ and open the template in the editor.
                 <div class="playerSelection" id="player2">
                 </div>
             </div>
+
             <div id="finishButton" class="centered80">
                 <a onclick="startGame()">Start game</a>
             </div>
