@@ -60,6 +60,30 @@ function paintPlayer(figures, teamColor){
             canvas.fillStyle = "red";
             canvas.font = "bold 30px Arial";
             canvas.fillText(x.hp, coords.x+5, coords.y+30)
+
+            if(x === frozen){
+                var fr = new Image();
+                fr.src = "src/frozen.png";
+                fr.onload = e => {
+                    canvas.drawImage(fr, coords.x, coords.y);
+                }
+            }
+
+            if(x === poisoned){
+                var po = new Image();
+                po.src = "src/poisoned.png";
+                po.onload = e => {
+                    canvas.drawImage(po, coords.x, coords.y);
+                }
+            }
+            
+            if(x === chanted){
+                var ch = new Image();
+                ch.src = "src/chanted.png";
+                ch.onload = e => {
+                    canvas.drawImage(ch, coords.x, coords.y);
+                }
+            }
         }
     })
 }
@@ -131,10 +155,19 @@ function interact(coords){
 // move to coords if enaugh speed and empty
 function move(figureOnTurn, coords){
     var distance = Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-coords.x), 2)+Math.pow(Math.abs(figureOnTurn.y-coords.y),2));
+    
+    if(figureOnTurn === frozen) {
+        return false;
+    }
+
     if(distance > figureOnTurn.speed) return false;
 
     figureOnTurn.x = coords.x;
     figureOnTurn.y = coords.y;
+
+    if(figureOnTurn === poisoned) {
+        dealDmg(figureOnTurn, distance);
+    }
 
     return true;
 }
@@ -143,18 +176,12 @@ function move(figureOnTurn, coords){
 function attack(figureOnTurn, target){
     if(areAllies(figureOnTurn, target)){
         switch(figureOnTurn.name){
-            case "warrior":
-            case "archer":
-            case "assassin":
-            case "mage":
-                return false;
-
             case "priest":
                 heal(target, 30);
-                return true;
+                break;
             case "enchanter":
-                chant(target);
-                return true;
+                chanted = target;
+                break;
             default:
                 return false;
         }
@@ -163,14 +190,25 @@ function attack(figureOnTurn, target){
         var distance = Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-target.x), 2)+Math.pow(Math.abs(figureOnTurn.y-target.y),2));
         if(distance > figureOnTurn.range) return false;
         
-        if(figureOnTurn.name === "archer"){
-            dealDmg(target, figureOnTurn.dmg + (Math.floor(Math.random()*1000 % 20)));
+        switch(figureOnTurn.name) {
+            case "archer":
+                dealDmg(target, (Math.floor(Math.random()*1000 % 20)));
+                break;
+            case "mage":
+                frozen = target;
+                break;
+            case "assassin":
+                poisoned = target;
+                break;
+            default: break;
         }
-        else {
-            dealDmg(target, figureOnTurn.dmg);
-        }
+        
+        dealDmg(target, figureOnTurn.dmg);
         return true; 
     }
+
+    if(figureOnTurn === frozen) frozen = undefined;
+    return true;
 }
 
 function dealDmg(target, dmg){
@@ -186,6 +224,9 @@ function heal(target, hp){
     target.hp += hp;
     if(target.hp > target.maxhp) target.hp = target.maxhp;
     console.log(target.name + " healed");
+
+    if(target === frozen) frozen = undefined;
+    if(target === poisoned) poisoned = undefined;
 }
 
 function areAllies(first, second){

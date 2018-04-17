@@ -52,6 +52,10 @@
     width: 50%;
 }
 
+#role {
+    color: white;
+}
+
 #passive {
     font-size: 70px;
     height: 500px;
@@ -95,14 +99,4 @@
 #selectButton {
     font-size: 70px;
     color: white;
-}
-
-#finishButton {
-    font-size: 80px;
-    visibility: hidden;
-}
-
-#finishButton a{
-    color: green;
-    outline-color: transparent;
 }

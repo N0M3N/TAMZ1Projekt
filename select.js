@@ -1,11 +1,11 @@
 var player1 = [], player2 = [], notselected = [];
 var playerOnTurn = 1;
-const warriorPassive = "";
-const assassinPassive = "Assasin: Attacking an enemy poisons them causing them to recieve damage when moving.";
-const magePassive = "Frost mage: Can attack any enemy on the map and freeze them reducing their speed";
-const priestPassive = "Priestess: Can heal allies for 30 health and cleans their conditions.";
-const archerPassive = "Archer: His attacks deal up to 20 bonus damage (this bonus can be modified by enchanter)";
-const enchanterPassive = "Enchanter: Enchants allies increasing their damage.";
+const warriorPassive = "<span id=\"role\">Warrior: </span> <span id=\"role\">Recovers</span> part of their health after the turn.";
+const assassinPassive = "<span id=\"role\">Assasin:</span> Attacking an enemy <span id=\"role\">poisons</span> them causing them to recieve damage when moving.";
+const magePassive = "<span id=\"role\">Frost Mage:</span> Can attack any enemy on the map and <span id=\"role\">freeze:</span> them disabling their next steps.";
+const priestPassive = "<span id=\"role\">Priest:</span> Can <span id=\"role\">heal</span> allies for 30 health and <span id=\"role\">cleanses</span> their conditions.";
+const archerPassive = "<span id=\"role\">Archer:</span> His attacks deal up to 20 <span id=\"role\">bonus damage</span> (this bonus can be modified by enchanter).";
+const enchanterPassive = "<span id=\"role\">Enchanter:</span> <span id=\"role\">Increases damage</span> of their allies by 50%.";
 var selected;
 
 function Role(name, hp, speed, range, dmg, passive){
@@ -60,7 +60,7 @@ function repaintSelect(){
     })
 
     if(selected!==undefined) {
-        document.getElementById("passive").innerText = selected.passive;
+        document.getElementById("passive").innerHTML = selected.passive;
         document.getElementById("health").innerText = selected.maxhp;
         document.getElementById("damage").innerText = selected.dmg;
         document.getElementById("range").innerText = selected.range;
@@ -106,13 +106,12 @@ function confirmed(){
     if(notselected.length!==0) {
         selected = notselected[0];
         var passive = document.getElementById("passive");
-        passive.innerText = selected.passive;
+        passive.innerHTML = selected.passive;
     }
     else {
-        document.getElementById("selectButton").style.visibility = "hidden";
-        document.getElementById("stats").style.visibility = "hidden";
-        document.getElementById("passive").style.visibility = "hidden";
-        document.getElementById("finishButton").style.visibility = "visible";
+        localStorage.player1 = JSON.stringify(player1);
+        localStorage.player2 = JSON.stringify(player2);
+        $.mobile.navigate("#page2");
     }
 
     repaintSelect();
@@ -121,10 +120,4 @@ function confirmed(){
 function select(name){
     selected = notselected.find(x => x.name == name);
     repaintSelect();
-}
-
-function startGame(){
-    localStorage.player1 = JSON.stringify(player1);
-    localStorage.player2 = JSON.stringify(player2);
-    $.mobile.navigate("#page2");
 }
