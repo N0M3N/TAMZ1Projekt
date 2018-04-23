@@ -150,6 +150,16 @@ function interact(coords){
         queue.next();
         repaint();
     }
+
+    if(player1.figures.length === 0){
+        $("#winText").text("Player 2 wins!");
+        $.mobile.navigate("#winScreen");
+    }
+
+    if(player2.figures.length === 0){
+        $("#winText").text("Player 1 wins!");
+        $.mobile.navigate("#winScreen");
+    }
 }
 
 // move to coords if enaugh speed and empty
@@ -157,7 +167,10 @@ function move(figureOnTurn, coords){
     var distance = Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-coords.x), 2)+Math.pow(Math.abs(figureOnTurn.y-coords.y),2));
     
     if(figureOnTurn === frozen) {
-        return false;
+        if(!enemyInRange(figureOnTurn)) { 
+            return true;   
+        }
+        else return false;
     }
 
     if(distance > figureOnTurn.speed) return false;
@@ -166,10 +179,29 @@ function move(figureOnTurn, coords){
     figureOnTurn.y = coords.y;
 
     if(figureOnTurn === poisoned) {
-        dealDmg(figureOnTurn, distance);
+        dealDmg(figureOnTurn, Math.floor(distance));
     }
 
     return true;
+}
+
+function enemyInRange(figure) {
+    var inrange = false;
+    if(areAllies(figure, player1.figures[0])){
+        player2.figures.forEach(x => {
+            var distance = Math.sqrt(Math.pow(Math.abs(figure.x-x.x),2)+Math.pow(Math.abs(figure.y-x.y),2));
+            if(distance < figure.range)
+                inrange = true;
+        })
+    }
+    else {
+        player1.figures.forEach(x => {
+            var distance = Math.sqrt(Math.pow(Math.abs(figure.x-x.x),2)+Math.pow(Math.abs(figure.y-x.y),2));
+            if(distance < figure.range)
+                inrange = true;
+        })
+    }
+    return inrange;
 }
 
 // attack the target if in range
@@ -202,8 +234,12 @@ function attack(figureOnTurn, target){
                 break;
             default: break;
         }
-        
-        dealDmg(target, figureOnTurn.dmg);
+        if(figureOnTurn === chanted){
+            dealDmg(target, figureOnTurn.dmg * 1.5);
+        }
+        else {
+            dealDmg(target, figureOnTurn.dmg);
+        }
         return true; 
     }
 
@@ -230,34 +266,9 @@ function heal(target, hp){
 }
 
 function areAllies(first, second){
-    var f = false, s = false;
-    player1.figures.forEach(x => {
-        if(x === first){
-            f = true;
-        }
-        else if(x === second){
-            s = true;
-        }
-    })
-
-    if(f && s){
-        return true;
-    }
-    else {
-        f = false;
-        s = false;
-    }
-
-    player2.figures.forEach(x => {
-        if(x === first){
-            f = true;
-        }
-        else if(x === second){
-            s = true;
-        }
-    })
-
-    return f && s;
+    if(ArrayContains(player1.figures, first) && ArrayContains(player1.figures, second)) return true;
+    if(ArrayContains(player2.figures, first) && ArrayContains(player2.figures, second)) return true;    
+    return false;
 }
 
 function Queue(){
@@ -298,4 +309,13 @@ function removeFromArray(array, object){
         }
     })
     return newArr;
+}
+
+function ArrayContains(array, item){
+    var contains = false;
+    array.forEach(element => {
+        if(element === item)
+            contains = true;       
+    });
+    return contains;
 }

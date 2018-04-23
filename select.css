@@ -100,3 +100,14 @@
     font-size: 70px;
     color: white;
 }
+
+#winScreen {
+    background-color: #444444;
+    font-size: 200%;
+}
+
+#winScreen h1 {
+    color: #ffff99;
+    left: auto;
+    right: auto;
+}
