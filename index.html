@@ -64,7 +64,12 @@ and open the template in the editor.
         </div>
 
         <div data-role="page" id="winScreen">
-            <h1 id="winText"></h1>
+            <script>
+                function newGame() {
+                    $.mobile.navigate("#select");
+                    location.reload(true);
+                }
+            </script>
         </div>
     </body>
 </html>

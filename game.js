@@ -152,7 +152,11 @@ function interact(coords){
     }
 
     if(player1.figures.length === 0){
-        $("#winText").text("Player 2 wins!");
+        document.getElementById("winScreen").innerHTML = "<h1 id='winText'>Player 1 win!</h1>" +
+        "<div id='video'>" +
+                "<iframe width='1080' height='512' src='https://www.youtube.com/embed/S22_DuaoHCU' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>" +
+        "</div>" +
+        "<a id='newGame' onclick='newGame()'>New game</a>";
         $.mobile.navigate("#winScreen");
     }
 

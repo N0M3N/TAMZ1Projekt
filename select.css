@@ -104,10 +104,23 @@
 #winScreen {
     background-color: #444444;
     font-size: 200%;
+    text-align: center;
 }
 
-#winScreen h1 {
+#video {
+    position: relative;
+    top: 600px;
+}
+
+#winText {
     color: #ffff99;
-    left: auto;
-    right: auto;
+    position: relative;
+    top: 400px;
+}
+
+#newGame {
+    position: relative;
+    top: 1000px;
+    text-decoration: none;
+    font-size: 200%;
 }
