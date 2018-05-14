@@ -1,6 +1,7 @@
 var canvas, player1, player2;
 var queue = new Queue();
 var chanted, frozen, poisoned;
+var interacting = false;
 
 $(document).on("pagecreate", "#page2", function() {
     player1.figures = JSON.parse(localStorage.player1);
@@ -125,6 +126,9 @@ function getCanvasCoords(x, y){
 
 // figure on turn interacts with clicked board coords
 function interact(coords){
+    if(interacting) return;
+    
+    interacting = true;
     var figureOnTurn = queue.seek();
     var target;
     player1.figures.forEach(x => {
@@ -164,6 +168,7 @@ function interact(coords){
         $("#winText").text("Player 1 wins!");
         $.mobile.navigate("#winScreen");
     }
+    interacting = false;
 }
 
 // move to coords if enaugh speed and empty

@@ -1,126 +1,36 @@
-.centered80 {
-    position: relative;
-    left:10%;
-    right:10%;
-    width: 80%;
-    text-align: center;
-}
-
-.marginTopBot20 {
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-
-.centerWrapper {
-    text-align: center;
-}
-
 #page1 {
-    background-color: #333;
-    color: rosybrown;
-    text-shadow: 0px 0px white;
-    font-family: 'Indie Flower';
-    font-size: 50px;
+    background-color: #160707;
+    font-size: 2em;
+    color: #ad5858;
+    height: 100%;
+}
+#available {
+    padding-top: 30px;
+    height: 10%;
 }
 
-#page1 img {
-    width: 16%;
+#available img {
+    width: 100%;
+    height: 100%;
+}
+#confirmSelected {
+    height: 10%;
 }
 
-#page1 .selected {
-    border: 10px solid white;
-    border-radius: 20%;
-}
-
-.h3 {
-    font-size: 50px;
-}
-
-#notSelected {
-    height: 200px;
-}
-
-#stats {
-    position: relative;
-    text-align: center;
-    width: 40%;
-    left: 30%;
-    right: 30%;
-}
-
-#stats td {
-    width: 50%;
-}
-
-#role {
+.ui-page-theme-a a {
     color: white;
 }
-
-#passive {
-    font-size: 70px;
-    height: 500px;
+#description {
+    height: 35%;
+}
+#selection {
+    height: 35%;
 }
 
-#selectionHolder {
-    text-align: center;
-    width: 80%;
-}
-
-#player1 {
-    height: 600px;
-    float:left;
-}
-
-#player2 {
-    height: 600px;
-    float: right;
-}
-
-#page1 .playerSelection {
-    text-align: center;
-    font-size: 40px;
-    width: 45%;
-}
-
-#page2 .playerSelection { 
-    text-align: center;
-    font-size: 50px;
-    width: 45%;
-}
-
-#page1 .playerSelection img {
-    width: 50%;
-}
-
-#page2 .playerSelection img {
-    width: 50%;
-}
-
-#selectButton {
-    font-size: 70px;
-    color: white;
-}
-
-#winScreen {
-    background-color: #444444;
-    font-size: 200%;
-    text-align: center;
-}
-
-#video {
-    position: relative;
-    top: 600px;
-}
-
-#winText {
-    color: #ffff99;
-    position: relative;
-    top: 400px;
-}
-
-#newGame {
-    position: relative;
-    top: 1000px;
-    text-decoration: none;
-    font-size: 200%;
+.onTurnIndicator {
+    width: 30px;
+    height: 30px;
+    background: linear-gradient(to bottom, #353535, #adadad);
+    transform: rotate(-45deg);
+    border-radius: 80% 0 55% 50% / 55% 0 80% 50%;  
 }
