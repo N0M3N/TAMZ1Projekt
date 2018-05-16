@@ -10,15 +10,15 @@ and open the template in the editor.
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <link rel="shortcut icon" href="#">
-        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-        <link rel="stylesheet" href="select.css">
-        <link rel="stylesheet" href="game.css">
+        <link rel="stylesheet" href="libs/jquery.mobile-1.4.5.min.css" />
+        <link rel="stylesheet" href="libs/bootstrap.min.css">
+        <link rel="stylesheet" href="index.css">
 
-        <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.js"></script>
-        <script type="text/javascript" src="http://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
-        <script type="text/javascript" src="select.js"></script>
-        <script type="text/javascript" src="game.js"></script>
+        <script type="text/javascript" src="libs/jquery-2.1.1.js"></script>
+        <script type="text/javascript" src="libs/jquery.mobile-1.4.5.min.js"></script>
+        <script type="text/javascript" src="js/select.js"></script>
+        <script type="text/javascript" src="js/game.js"></script>
+        <script type="text/javascript" src="js/winscreen.js"></script>
 </head>
     <body>
         <div data-role="page" class="container-fluid col-sm-12" id="page1">
@@ -60,19 +60,18 @@ and open the template in the editor.
             </canvas>
         </div>
 
-        <div data-role="page" id="winScreen">
-            <script>
-                function newGame() {
-                    $.mobile.navigate("#select");
-                    location.reload(true);
-                }
-            </script>
+        <div data-role="page" id="winScreen" class="container-fluid text-center">
+            <h1 id="winnerText"></h1>
+            <video class="col-sm-10" id="video" width="100%" height="auto" controls>
+                <source src="src/Congratulations guy.mp4">
+            </video>
+            <a href="#" id="newGame" class="col-sm-3 btn btn-success btn-lg" onclick="newGame()">New Game</a>
         </div>
 
     <script>
         selected("warrior");
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+    <script src="libs/popper.min.js"></script>
+    <script src="libs/bootstrap.min.js"></script>
     </body>
 </html>

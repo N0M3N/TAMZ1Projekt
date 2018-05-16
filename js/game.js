@@ -1,12 +1,11 @@
-var canvas, player1, player2;
+var canvas, players;
 var queue = new Queue();
 var chanted, frozen, poisoned;
 var interacting = false;
+var distanceOverflow = 0.5;
 
 $(document).on("pagecreate", "#page2", function() {
-    player1.figures = JSON.parse(localStorage.player1);
-    player2.figures = JSON.parse(localStorage.player2);
-
+    players = JSON.parse(localStorage.players);
     var canvElem = document.getElementById("canvas");
     canvas = canvElem.getContext("2d");
     canvElem.addEventListener("click", e => {
@@ -18,21 +17,23 @@ $(document).on("pagecreate", "#page2", function() {
 
 // set positions of the figures on the field and enqueue them
 function initGame(){
-    player1.figures[0].x = 2; player1.figures[0].y = 0;
-    player1.figures[1].x = 4; player1.figures[1].y = 0;
-    player1.figures[2].x = 6; player1.figures[2].y = 0;
-
-    player2.figures[0].x = 2; player2.figures[0].y = 15;
-    player2.figures[1].x = 4; player2.figures[1].y = 15;
-    player2.figures[2].x = 6; player2.figures[2].y = 15;
-
-    queue.push(player1.figures[0]);
-    queue.push(player2.figures[0]);
-    queue.push(player1.figures[1]);
-    queue.push(player2.figures[1]);
-    queue.push(player1.figures[2]);
-    queue.push(player2.figures[2]);
-
+    // place player 1 figures
+    players[true].figures[0].x = 2; players[true].figures[0].y = 0;
+    players[true].figures[1].x = 4; players[true].figures[1].y = 0;
+    players[true].figures[2].x = 6; players[true].figures[2].y = 0;
+    // place player 0 figures
+    players[false].figures[0].x = 2; players[false].figures[0].y = 15;
+    players[false].figures[1].x = 4; players[false].figures[1].y = 15;
+    players[false].figures[2].x = 6; players[false].figures[2].y = 15;
+    // queue up in turns
+    queue.push(players[true].figures[0]);
+    queue.push(players[false].figures[0]);
+    queue.push(players[true].figures[1]);
+    queue.push(players[false].figures[1]);
+    queue.push(players[true].figures[2]);
+    queue.push(players[false].figures[2]);
+    console.log(queue);
+    // draw board
     repaint();
 }
 
@@ -42,9 +43,8 @@ function repaint() {
     bg.src = "src/playground.png";
     bg.onload = e => {
         canvas.drawImage(bg, 0, 0);
-
-        paintPlayer(player1.figures, "#FFF3");
-        paintPlayer(player2.figures, "#0005");
+        paintPlayer(players[true].figures, "#FFF3");
+        paintPlayer(players[false].figures, "#0005");
         paintRanges();
     }
 }
@@ -52,7 +52,7 @@ function repaint() {
 function paintPlayer(figures, teamColor){
     figures.forEach(x => {
         var img = new Image();
-        img.src = "src/" + x.name + ".png";
+        img.src = "src/" + x.role + ".png";
         var coords = getCanvasCoords(x.x, x.y);
         img.onload = e => {
             canvas.fillStyle = teamColor;
@@ -131,12 +131,12 @@ function interact(coords){
     interacting = true;
     var figureOnTurn = queue.seek();
     var target;
-    player1.figures.forEach(x => {
+    players[true].figures.forEach(x => {
         if(x.x == coords.x && x.y == coords.y){
             target = x;
         }
     })
-    player2.figures.forEach(x => {
+    players[false].figures.forEach(x => {
         if(x.x == coords.x && x.y == coords.y){
             target = x;
         }
@@ -144,28 +144,22 @@ function interact(coords){
 
     if(target === undefined){
         if(move(figureOnTurn, coords)){
-            console.log(figureOnTurn.name + " moved to [" + coords.x + ":" + coords.y + "]");
             queue.next();
             repaint();
         }
     }
     else if(attack(figureOnTurn, target)) {
-        console.log(figureOnTurn.name + "[" + figureOnTurn.x + ":" + figureOnTurn.y + "] interacted " + target.name + "[" + coords.x + ":" + coords.y + "]");
         queue.next();
         repaint();
     }
 
-    if(player1.figures.length === 0){
-        document.getElementById("winScreen").innerHTML = "<h1 id='winText'>Player 1 win!</h1>" +
-        "<div id='video'>" +
-                "<iframe width='1080' height='512' src='https://www.youtube.com/embed/S22_DuaoHCU' frameborder='0' allow='autoplay; encrypted-media' allowfullscreen></iframe>" +
-        "</div>" +
-        "<a id='newGame' onclick='newGame()'>New game</a>";
+    if(players[true].figures.length === 0){
+        localStorage.winnerText = "Player 1 wins!";
         $.mobile.navigate("#winScreen");
     }
 
-    if(player2.figures.length === 0){
-        $("#winText").text("Player 1 wins!");
+    if(players[false].figures.length === 0){
+        localStorage.winnerText = "Player 2 wins!";
         $.mobile.navigate("#winScreen");
     }
     interacting = false;
@@ -173,16 +167,16 @@ function interact(coords){
 
 // move to coords if enaugh speed and empty
 function move(figureOnTurn, coords){
-    var distance = Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-coords.x), 2)+Math.pow(Math.abs(figureOnTurn.y-coords.y),2));
-    
     if(figureOnTurn === frozen) {
         if(!enemyInRange(figureOnTurn)) { 
-            return true;   
+            return true;
         }
         else return false;
     }
 
-    if(distance > figureOnTurn.speed) return false;
+    var distance = getDistance({x: figureOnTurn.x, y: figureOnTurn.y}, coords);
+
+    if(distance - distanceOverflow > figureOnTurn.speed) return false;
 
     figureOnTurn.x = coords.x;
     figureOnTurn.y = coords.y;
@@ -196,16 +190,16 @@ function move(figureOnTurn, coords){
 
 function enemyInRange(figure) {
     var inrange = false;
-    if(areAllies(figure, player1.figures[0])){
-        player2.figures.forEach(x => {
-            var distance = Math.sqrt(Math.pow(Math.abs(figure.x-x.x),2)+Math.pow(Math.abs(figure.y-x.y),2));
+    if(areAllies(figure, players[true].figures[0])){
+        players[false].figures.forEach(x => {
+            var distance = getDistance({x: figure.x, y: figure.y}, x);
             if(distance < figure.range)
                 inrange = true;
         })
     }
     else {
-        player1.figures.forEach(x => {
-            var distance = Math.sqrt(Math.pow(Math.abs(figure.x-x.x),2)+Math.pow(Math.abs(figure.y-x.y),2));
+        players[true].figures.forEach(x => {
+            var distance = getDistance({x: figure.x, y: figure.y}, x);
             if(distance < figure.range)
                 inrange = true;
         })
@@ -213,10 +207,14 @@ function enemyInRange(figure) {
     return inrange;
 }
 
+function getDistance(coords1, coords2) {
+    return Math.sqrt(Math.pow(coords1.x - coords2.x, 2) + Math.pow(coords1.y - coords2.y, 2));
+}
+
 // attack the target if in range
 function attack(figureOnTurn, target){
     if(areAllies(figureOnTurn, target)){
-        switch(figureOnTurn.name){
+        switch(figureOnTurn.role){
             case "priest":
                 heal(target, 30);
                 break;
@@ -228,10 +226,10 @@ function attack(figureOnTurn, target){
         }
     }
     else {
-        var distance = Math.sqrt(Math.pow(Math.abs(figureOnTurn.x-target.x), 2)+Math.pow(Math.abs(figureOnTurn.y-target.y),2));
-        if(distance > figureOnTurn.range) return false;
+        var distance = getDistance({x: figureOnTurn.x, y: figureOnTurn.y}, {x: target.x, y: target.y});
+        if(distance - distanceOverflow > figureOnTurn.range) return false;
         
-        switch(figureOnTurn.name) {
+        switch(figureOnTurn.role) {
             case "archer":
                 dealDmg(target, (Math.floor(Math.random()*1000 % 20)));
                 break;
@@ -260,23 +258,23 @@ function dealDmg(target, dmg){
     target.hp -= dmg;
     if(target.hp > 0) return;
     
-    player1.figures = removeFromArray(player1.figures, target);
-    player2.figures = removeFromArray(player2.figures, target);
+    players[true].figures = removeFromArray(players[true].figures, target);
+    players[false].figures = removeFromArray(players[false].figures, target);
     queue.remove(target);
 }
 
 function heal(target, hp){
     target.hp += hp;
     if(target.hp > target.maxhp) target.hp = target.maxhp;
-    console.log(target.name + " healed");
+    console.log(target.role + " healed");
 
     if(target === frozen) frozen = undefined;
     if(target === poisoned) poisoned = undefined;
 }
 
 function areAllies(first, second){
-    if(ArrayContains(player1.figures, first) && ArrayContains(player1.figures, second)) return true;
-    if(ArrayContains(player2.figures, first) && ArrayContains(player2.figures, second)) return true;    
+    if(ArrayContains(players[true].figures, first) && ArrayContains(players[true].figures, second)) return true;
+    if(ArrayContains(players[false].figures, first) && ArrayContains(players[false].figures, second)) return true;    
     return false;
 }
 

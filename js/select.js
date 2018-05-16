@@ -1,17 +1,23 @@
 var roles = {
     "warrior": { maxhp: 100, hp: 100, speed: 8, range: 1, dmg: 20, role: "warrior" },
-    "assassin" : {maxhp: 80, hp: 80, speed: 13, range: 1, dmg: 15, role: "assasin" },
+    "assassin" : {maxhp: 80, hp: 80, speed: 13, range: 1, dmg: 15, role: "assassin" },
     "archer" : {maxhp: 80, hp: 80, speed: 5, range: 13, dmg: 20, role: "archer" },
     "mage" : {maxhp: 60, hp: 60, speed: 3, range: 20, dmg: 30, role: "mage"},
     "priest" : {maxhp: 80, hp: 80, speed: 10, range: 1, dmg: 10, role: "priest" },
     "enchanter" : {maxhp: 60, hp: 60, speed: 8, range: 10, dmg: 20, role: "enchanter" }
-}, 
+},
 displayed,
 players = {
     true : { figures: new Array() },
     false : { figures: new Array() }
 },
 playerOnTurn = true;
+
+$(document).ready(function() {
+    if(localStorage.players !== undefined) {
+        $.mobile.navigate("#page2");
+    }
+})
 
 function selected(item) {
     displayed = item;
@@ -44,4 +50,5 @@ function confirmSelected() {
 function startGame(){
     localStorage.players = JSON.stringify(players);
     localStorage.playerOnTurn = JSON.stringify(true);
+    $.mobile.navigate("#page2");
 }
